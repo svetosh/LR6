@@ -1,0 +1,24 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+using namespace std;
+
+struct addres {
+    string srteet = "";
+    int houseNumber;
+    int fletNumber;
+};
+
+struct occupant {
+    string name = "";
+    vector <addres> add;
+    string manFemale = "";
+    int age;
+};
+
+int main()
+{
+    
+    return 0;
+}
