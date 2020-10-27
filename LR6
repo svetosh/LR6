@@ -1,24 +1,89 @@
-#include <iostream>
+#include <iostream> 
 #include <string>
 #include <vector>
 #include <fstream>
-using namespace std;
+#include <algorithm>
 
-struct addres {
-    string srteet = "";
-    int houseNumber;
-    int fletNumber;
+struct cAddress {
+    std::string street;
+    unsigned int houseNumber;
+    unsigned int flatNumber;
 };
-
 struct occupant {
-    string name = "";
-    vector <addres> add;
-    string manFemale = "";
-    int age;
+    std::string name;
+    cAddress address;
+    std::string gender;
+    unsigned int age;
 };
 
-int main()
-{
-    
-    return 0;
+
+int main() {
+
+    std::vector <occupant> dataBase;
+
+    occupant John;
+    John.name = "Ivanov John Ivanovich";
+    John.address.street = "Pushkina";
+    John.address.flatNumber = 3;
+    John.address.houseNumber = 2;
+    John.gender = "Male";
+    John.age = 32;
+    occupant Lem;
+    Lem.name = "Lemonov Lem Lemonovich";
+    Lem.address.street = "Volgogradskaya";
+    Lem.address.flatNumber = 56;
+    Lem.address.houseNumber = 32;
+    Lem.gender = "Female";
+    Lem.age = 50;
+    occupant Goga;
+    Goga.name = "Bruno Goga Konst";
+    Goga.address.street = "Ptitcefabrica";
+    Goga.address.flatNumber = 100;
+    Goga.address.houseNumber = 20;
+    Goga.gender = "Male";
+    Goga.age = 64;
+
+    dataBase.push_back(John);
+    dataBase.push_back(Lem);
+    dataBase.push_back(Goga);
+
+    for (int i = 0; i < dataBase.size(); i++) {
+        std::cout << dataBase[i].name << std::endl << "street: "
+            << dataBase[i].address.street << ", houseNumber: "
+            << dataBase[i].address.houseNumber << ", flatNumber: "
+            << dataBase[i].address.flatNumber << std::endl << "gender: "
+            << dataBase[i].gender << std::endl << "age: "
+            << dataBase[i].age << std::endl;
+    }
+    std::cout << std::endl;
+    std::sort(dataBase.begin(), dataBase.end(), [](occupant a, occupant b)
+        {
+            return a.name < b.name;
+        });
+    for (int i = 0; i < dataBase.size(); i++) {
+        std::cout << dataBase[i].name << std::endl << "street: "
+            << dataBase[i].address.street << ", houseNumber: "
+            << dataBase[i].address.houseNumber << ", flatNumber: "
+            << dataBase[i].address.flatNumber << std::endl << "gender: "
+            << dataBase[i].gender << std::endl << "age: "
+            << dataBase[i].age << std::endl;
+    }
+    std::cout << std::endl;
+    int home;
+    std::cout << "Enter number house = ";
+    std::cin >> home;
+    int counter = 0;
+    for (int numOccuo = 0; numOccuo < dataBase.size(); numOccuo++) {
+        if (dataBase[numOccuo].address.houseNumber == home) {
+            if (dataBase[numOccuo].gender == "Female" && (dataBase[numOccuo].age > 24 && dataBase[numOccuo].age < 60)) {
+                counter++;
+            }
+        }
+        else {
+            numOccuo++;
+        }
+    }
+    std::cout << counter;
+    std::cout << std::endl;
+
 }
