@@ -196,8 +196,9 @@ int main()
     readFromFile(dataBase, "404.txt");
     outputVec(dataBase);
     std::ofstream binfile("404.txt", std::ios::binary);
-    int abin;
-    std::cout << "enter any number";
-    binfile >> abin;
+    int abin = 0;
+    std::cout << "enter any number: ";
+    std::cin >> abin;
+    binfile << abin;
     binfile.close;
 }
