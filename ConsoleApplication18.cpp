@@ -195,10 +195,10 @@ int main()
     writeToFile(dataBase, "404.txt");
     readFromFile(dataBase, "404.txt");
     outputVec(dataBase);
-    std::ofstream binfile("404.txt", std::ios::binary);
+    std::ofstream binfile("404.txt", std::ios::app, std::ios::binary);
     int abin = 0;
     std::cout << "enter any number: ";
     std::cin >> abin;
-    binfile << abin;
-    binfile.close;
+    binfile << std::endl << abin;
+    binfile.close();
 }
