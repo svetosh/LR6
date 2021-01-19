@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+using namespace std;
 
 struct cAddress {
     std::string street;
@@ -16,120 +17,66 @@ struct occupant {
     unsigned int age;
 };
 
-std::ostream& operator<<(std::ostream &out,
-    const std::vector<occupant> &dataBase)
+std::ostream& operator<<(std::ostream& out, const std::vector<occupant>& dataBase)
 {
-    for (auto &occupant : dataBase) {
-        if (occupant.name == dataBase[dataBase.size() - 1].name
-            && occupant.address.street
-            == dataBase[dataBase.size() - 1].address.street
-            && occupant.address.houseNumber
-            == dataBase[dataBase.size() - 1].address.houseNumber
-            && occupant.address.flatNumber
-            == dataBase[dataBase.size() - 1].address.flatNumber
-            && occupant.age == dataBase[dataBase.size() - 1].age
-            && occupant.gender == dataBase[dataBase.size() - 1].gender)
-        {
-            out << occupant.name << ";" << occupant.address.street << ";"
-                << occupant.address.houseNumber << ";"
-                << occupant.address.flatNumber << ";" << occupant.gender
-                << ";" << occupant.age;
-        }
-        else
-        {
-            out << occupant.name << ";" << occupant.address.street << ";"
-                << occupant.address.houseNumber << ";"
-                << occupant.address.flatNumber << ";" << occupant.gender
-                << ";" << occupant.age << std::endl;
-        }
+    for (auto& occupant : dataBase)
+    {
+        out << occupant.name << ";" << occupant.address.street << ";"
+            << occupant.address.houseNumber << ";"
+            << occupant.address.flatNumber << ";" << occupant.gender
+            << ";" << occupant.age << std::endl;
     }
     return out;
 }
-std::vector<occupant>& operator>>(std::istream& in,
-    std::vector<occupant>& dataBase)
+std::istream& operator>>(std::istream& in, vector<occupant>& dataBase)
 {
-    dataBase.clear();
-    while (!in.eof()) 
+    while (!in.eof())
     {
-        occupant occupant;
-        char Char;
-        in.get(Char);
-        while (Char != ';') 
-        {
-            occupant.name += Char;
-            in.get(Char);
-        }
-        in.get(Char);
-        while (Char != ';') 
-        {
-            occupant.address.street += Char;
-            in.get(Char);
-        }
-        std::string str;
-        in.get(Char);
-        while (Char != ';')
-        {
-            str += Char;
-            in.get(Char);
-        }
-        occupant.address.houseNumber = std::stoi(str);
-        str = "";
-        in.get(Char);
-        while (Char != ';') 
-        {
-            str += Char;
-            in.get(Char);
-        }
-        occupant.address.flatNumber = std::stoi(str);
-        str = "";
-        in.get(Char);
-        while (Char != ';') 
-        {
-            occupant.gender += Char;
-            in.get(Char);
-        }
-        str = "";
-        in.get(Char);
-        while (Char != '\n' && !in.eof())
-        {
-            str += Char;
-            in.get(Char);
-        }
-        occupant.age = std::stoi(str);
-        dataBase.push_back(occupant);
+        occupant citizen;
+        string buffer;
+        getline(in, citizen.name, ';');
+        if(in.eof()) break;
+        getline(in, citizen.address.street, ';');
+        getline(in, buffer, ';');
+        citizen.address.houseNumber = stoi(buffer);
+        getline(in, buffer, ';');
+        citizen.address.flatNumber = stoi(buffer);
+        getline(in, citizen.gender, ';');
+        getline(in, buffer, '\n');
+        citizen.age = stoi(buffer);
+        dataBase.push_back(citizen);
     }
-    return dataBase;
+    return in;
 }
 
 void outputVec(std::vector <occupant> dataBase)
 {
     for (int i = 0; i < dataBase.size(); i++) {
-        std::cout << dataBase[i].name << std::endl << "street: "
-            << dataBase[i].address.street << ", houseNumber: "
-            << dataBase[i].address.houseNumber << ", flatNumber: "
-            << dataBase[i].address.flatNumber << std::endl << "gender: "
-            << dataBase[i].gender << std::endl << "age: "
-            << dataBase[i].age << std::endl;
+        std::cout << dataBase[i].name << std::endl
+            << "street: " << dataBase[i].address.street
+            << ", houseNumber: " << dataBase[i].address.houseNumber
+            << ", flatNumber: " << dataBase[i].address.flatNumber << std::endl
+            << "gender: " << dataBase[i].gender << std::endl
+            << "age: " << dataBase[i].age << std::endl;
     }
     std::cout << std::endl;
 }
 void writeToFile(std::vector<occupant> dataBase, std::string nameInFile)
 {
-    std::fstream fileWrite;
+    std::ofstream fileWrite;
     fileWrite.open(nameInFile, std::ios::out);
     fileWrite << dataBase;
     fileWrite.close();
 }
 void readFromFile(std::vector<occupant>& dataBase, std::string nameInFile)
 {
-    std::fstream fileRead;
+    std::ifstream fileRead;
     fileRead.open(nameInFile, std::ios::in);
     fileRead >> dataBase;
     fileRead.close();
 }
 
-
-int main() 
+int main()
 {
     std::vector <occupant> dataBase;
     occupant Jon;
@@ -170,13 +117,13 @@ int main()
     std::cout << "Enter number house = ";
     std::cin >> home;
     int counter = 0;
-    for (int numOccuo = 0; numOccuo < dataBase.size(); numOccuo++) 
+    for (int numOccuo = 0; numOccuo < dataBase.size(); numOccuo++)
     {
         if (dataBase[numOccuo].address.houseNumber == home && dataBase[numOccuo].address.street == street)
         {
-            if (dataBase[numOccuo].gender == "Female" 
-                && (dataBase[numOccuo].age > 24 
-                && dataBase[numOccuo].age < 60)) 
+            if (dataBase[numOccuo].gender == "Female"
+                && (dataBase[numOccuo].age > 24
+                    && dataBase[numOccuo].age < 60))
             {
                 output = output + dataBase[numOccuo].name + '\n'
                     + dataBase[numOccuo].address.street + ", "
@@ -188,17 +135,15 @@ int main()
             }
         }
     }
-    std::cout << std::endl 
-              << "In this home = " << counter << std::endl
-              << output;
+    std::cout << std::endl
+        << "In this home = " << counter << std::endl
+        << output;
 
     writeToFile(dataBase, "404.txt");
     readFromFile(dataBase, "404.txt");
     outputVec(dataBase);
-    std::ofstream binfile("404.txt", std::ios::app, std::ios::binary);
-    int abin = 0;
-    std::cout << "enter any number: ";
-    std::cin >> abin;
-    binfile << std::endl << abin;
+    std::ofstream binfile("404.txt", std::ios::binary);
+
     binfile.close();
+    return 0;
 }
