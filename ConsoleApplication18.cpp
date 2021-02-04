@@ -1,4 +1,4 @@
-﻿#include <iostream> 
+#include <iostream> 
 #include <string>
 #include <vector>
 #include <fstream>
@@ -35,7 +35,7 @@ std::istream& operator>>(std::istream& in, vector<occupant>& dataBase)
         occupant citizen;
         string buffer;
         getline(in, citizen.name, ';');
-        if(in.eof()) break;
+        if (in.eof()) break;
         getline(in, citizen.address.street, ';');
         getline(in, buffer, ';');
         citizen.address.houseNumber = stoi(buffer);
@@ -76,6 +76,84 @@ void readFromFile(std::vector<occupant>& dataBase, std::string nameInFile)
     fileRead.close();
 }
 
+void
+bwrite_str(std::ofstream& ofile, std::string& s)
+{
+    uint64_t s_len = s.size();
+    ofile.write(reinterpret_cast<char*>(&s_len), sizeof(s_len));
+    ofile.write(s.data(), s_len);
+}
+
+template<typename T>
+void bwrite_num(std::ofstream& ofile, T& data)
+{
+    ofile.write(reinterpret_cast<char*>(&data), sizeof(data));
+}
+
+void
+bwrite(std::vector<occupant>& group)
+{
+    std::ofstream ofile("404Bin.txt", std::ios::binary);
+    if (!ofile.is_open()) 
+    {
+        std::cout << "Faile" << std::endl;
+        return;
+    }
+    for (occupant s : group) 
+    {
+        bwrite_str(ofile, s.name);
+        bwrite_str(ofile, s.address.street);
+        bwrite_num(ofile, s.address.flatNumber);
+        bwrite_num(ofile, s.address.houseNumber);
+        bwrite_str(ofile, s.gender);
+        bwrite_num(ofile, s.age);
+    }
+    ofile.close();
+}
+
+void
+bread_str(std::ifstream& ifile, std::string& s)
+{
+    uint64_t s_len;
+    ifile.read(reinterpret_cast<char*>(&s_len), sizeof(s_len));
+    s.resize(s_len);
+    ifile.read(s.data(), s_len);
+}
+
+template<typename T>
+void
+bread_num(std::ifstream& ifile, T& data)
+{
+    ifile.read(reinterpret_cast<char*>(&data), sizeof(data));
+}
+
+void
+read(std::vector<occupant>& group)
+{
+    std::ifstream ifile("404Bin.txt", std::ios::binary);
+    if (!ifile.is_open()) 
+    {
+        std::cout << "Faile" << std::endl;
+        return;
+    }
+    occupant s;
+    cAddress d;
+    while (!ifile.eof()) 
+    {
+        bread_str(ifile, s.name);
+        bread_str(ifile, s.address.street);
+        bread_str(ifile, s.gender);
+        if (!ifile.eof()) 
+        {
+            bread_num(ifile, s.age);
+            bread_num(ifile, s.address.flatNumber);
+            bread_num(ifile, s.address.houseNumber);
+            group.push_back(s);
+        }
+    }
+    ifile.close();
+}
+
 int main()
 {
     std::vector <occupant> dataBase;
@@ -89,14 +167,14 @@ int main()
     occupant Lem;
     Lem.name = "Lemonov Lem Lemonovich";
     Lem.address.street = "Volgogradskaya";
-    Lem.address.flatNumber = 56;
+    Lem.address.flatNumber = 5;
     Lem.address.houseNumber = 32;
     Lem.gender = "Female";
     Lem.age = 50;
     occupant Goga;
     Goga.name = "Bruno Goga Konst";
     Goga.address.street = "Ptichefabrica";
-    Goga.address.flatNumber = 100;
+    Goga.address.flatNumber = 1;
     Goga.address.houseNumber = 32;
     Goga.gender = "Female";
     Goga.age = 30;
