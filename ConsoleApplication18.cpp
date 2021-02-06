@@ -76,87 +76,63 @@ void readFromFile(std::vector<occupant>& dataBase, std::string nameInFile)
     fileRead.close();
 }
 
-void
-bwrite_str(std::ofstream& ofile, std::string& s)
+void writeToFileBin(vector<occupant>& data, string nameInFile)
 {
-    uint64_t s_len = s.size();
-    ofile.write(reinterpret_cast<char*>(&s_len), sizeof(s_len));
-    ofile.write(s.data(), s_len);
-}
-
-template<typename T>
-void bwrite_num(std::ofstream& ofile, T& data)
-{
-    ofile.write(reinterpret_cast<char*>(&data), sizeof(data));
-}
-
-void
-bwrite(std::vector<occupant>& group)
-{
-    std::ofstream ofile("404Bin.txt", std::ios::binary);
-    if (!ofile.is_open()) 
+    ofstream ofile(nameInFile, std::ios::binary);
+    if (!ofile.is_open())
     {
         std::cout << "Faile" << std::endl;
         return;
     }
-    for (occupant s : group) 
+    for (occupant o : data)
     {
-        bwrite_str(ofile, s.name);
-        bwrite_str(ofile, s.address.street);
-        bwrite_num(ofile, s.address.flatNumber);
-        bwrite_num(ofile, s.address.houseNumber);
-        bwrite_str(ofile, s.gender);
-        bwrite_num(ofile, s.age);
+        unsigned long int s = o.name.size();
+        ofile.write(reinterpret_cast<char*>(&s), sizeof(s));
+        ofile.write(o.name.c_str(), s);
+        s = o.address.street.size();
+        ofile.write(reinterpret_cast<char*>(&s), sizeof(s));
+        ofile.write(o.address.street.c_str(), s);
+        ofile.write(reinterpret_cast<char*>(&o.address.flatNumber), sizeof(o.address.flatNumber));
+        ofile.write(reinterpret_cast<char*>(&o.address.houseNumber), sizeof(o.address.houseNumber));
+        s = o.gender.size();
+        ofile.write(reinterpret_cast<char*>(&s), sizeof(s));
+        ofile.write(o.gender.c_str(), s);
+        ofile.write(reinterpret_cast<char*>(&o.age), sizeof(o.age));
     }
-    ofile.close();
 }
 
-void
-bread_str(std::ifstream& ifile, std::string& s)
+void readFromFileBin(std::vector<occupant>& data, std::string nameInFile)
 {
-    uint64_t s_len;
-    ifile.read(reinterpret_cast<char*>(&s_len), sizeof(s_len));
-    s.resize(s_len);
-    ifile.read(s.data(), s_len);
-}
-
-template<typename T>
-void
-bread_num(std::ifstream& ifile, T& data)
-{
-    ifile.read(reinterpret_cast<char*>(&data), sizeof(data));
-}
-
-void
-read(std::vector<occupant>& group)
-{
-    std::ifstream ifile("404Bin.txt", std::ios::binary);
-    if (!ifile.is_open()) 
+    ifstream ifile(nameInFile, std::ios::binary);
+    if (!ifile.is_open())
     {
         std::cout << "Faile" << std::endl;
         return;
     }
-    occupant s;
-    cAddress d;
-    while (!ifile.eof()) 
+    occupant o;
+    while(!ifile.eof())
     {
-        bread_str(ifile, s.name);
-        bread_str(ifile, s.address.street);
-        bread_str(ifile, s.gender);
-        if (!ifile.eof()) 
-        {
-            bread_num(ifile, s.age);
-            bread_num(ifile, s.address.flatNumber);
-            bread_num(ifile, s.address.houseNumber);
-            group.push_back(s);
-        }
+        unsigned long int s;
+        ifile.read(reinterpret_cast<char*>(&s), sizeof(s));
+        o.name.resize(s);
+        ifile.read(o.name.data(), s);
+        ifile.read(reinterpret_cast<char*>(&s), sizeof(s));
+        o.address.street.resize(s);
+        ifile.read(o.address.street.data(), s);
+        ifile.read(reinterpret_cast<char*>(&o.address.flatNumber), sizeof(o.address.flatNumber));
+        ifile.read(reinterpret_cast<char*>(&o.address.houseNumber), sizeof(o.address.houseNumber));
+        ifile.read(reinterpret_cast<char*>(&s), sizeof(s));
+        o.gender.resize(s);
+        ifile.read(o.gender.data(), s);
+        ifile.read(reinterpret_cast<char*>(&o.age), sizeof(o.age));
+        data.push_back(o);
     }
     ifile.close();
 }
 
 int main()
 {
-    std::vector <occupant> dataBase;
+    std::vector<occupant> dataBase;
     occupant Jon;
     Jon.name = "Ivanov Jon Ivanovich";
     Jon.address.street = "Pushkina";
@@ -177,7 +153,7 @@ int main()
     Goga.address.flatNumber = 1;
     Goga.address.houseNumber = 32;
     Goga.gender = "Female";
-    Goga.age = 30;
+    Goga.age = 20;
     dataBase.push_back(Jon);
     dataBase.push_back(Lem);
     dataBase.push_back(Goga);
@@ -220,8 +196,18 @@ int main()
     writeToFile(dataBase, "404.txt");
     readFromFile(dataBase, "404.txt");
     outputVec(dataBase);
-    std::ofstream binfile("404.txt", std::ios::binary);
 
-    binfile.close();
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+    cout << endl;
+
+    vector<occupant> datBase;
+    writeToFileBin(dataBase, "404Bin.txt");
+    readFromFileBin(datBase, "404Bin.txt");
+    outputVec(datBase);
+
+
     return 0;
 }
