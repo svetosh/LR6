@@ -125,6 +125,7 @@ void readFromFileBin(std::vector<occupant>& data, std::string nameInFile)
         o.gender.resize(s);
         ifile.read(o.gender.data(), s);
         ifile.read(reinterpret_cast<char*>(&o.age), sizeof(o.age));
+        if (ifile.eof()) break;
         data.push_back(o);
     }
     ifile.close();
