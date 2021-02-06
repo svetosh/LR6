@@ -195,6 +195,7 @@ int main()
         << output;
 
     writeToFile(dataBase, "404.txt");
+    dataBase.clear();
     readFromFile(dataBase, "404.txt");
     outputVec(dataBase);
 
